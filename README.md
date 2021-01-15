@@ -18,6 +18,22 @@ to RF using software-defined radio (SDR) platforms, such as
 $ gcc gpssim.c -lm -O3 -o gps-sdr-sim
 ```
 
+### Using bigger user motion files
+
+In order to use user motion files with more than 30000 samples (at 10Hz), the `USER_MOTION_SIZE`
+variable can be set to the maximum time of the user motion file in seconds. It is advisable to do
+this using make so gps-sdr-bin can update the size when needed. e.g:
+
+```
+$ make USER_MOTION_SIZE=4000
+```
+
+This variable can also be set when compiling directly with GCC:
+
+```
+$ gcc gpssim.c -lm -O3 -o gps-sdr-sim -DUSER_MOTION_SIZE=4000
+```
+
 ### Generating the GPS signal file
 
 A user-defined trajectory can be specified in either a CSV file, which contains 
@@ -27,9 +43,9 @@ The user is also able to assign a static location directly through the command l
 
 The user specifies the GPS satellite constellation through a GPS broadcast 
 ephemeris file. The daily GPS broadcast ephemeris file (brdc) is a merge of the
-individual site navigation files into one. The archive for the daily file is:
-
-[ftp://cddis.gsfc.nasa.gov/gnss/data/daily/](ftp://cddis.gsfc.nasa.gov/gnss/data/daily/)
+individual site navigation files into one. The archive for the daily file can 
+be downloaded from: https://cddis.nasa.gov/archive/gnss/data/daily/. Access 
+to this site requires registration, which is free.
 
 These files are then used to generate the simulated pseudorange and
 Doppler for the GPS satellites in view. This simulated range data is 
