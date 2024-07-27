@@ -55,8 +55,8 @@ The bladeRF and ADALM-Pluto command line interface requires I/Q pairs stored as 
 16-bit integers, while the hackrf_transfer and gps-sdr-sim-uhd.py
 support signed bytes.
 
-HackRF, bladeRF and ADALM-Pluto require 2.6 MHz sample rate, while the USRP2 requires
-2.5 MHz (an even integral decimator of 100 MHz).
+HackRF, bladeRF and ADALM-Pluto can accept the default sample rate of 2.6MHz, 
+while the USRP2 requires an even integral decimator of 100 MHz, i.e. 2.5MHz.
 
 The simulation start time can be specified if the corresponding set of ephemerides
 is available. Otherwise the first time of ephemeris in the RINEX navigation file
@@ -74,10 +74,12 @@ for bladeRF to playback the compressed file.
 Usage: gps-sdr-sim [options]
 Options:
   -e <gps_nav>     RINEX navigation file for GPS ephemerides (required)
-  -u <user_motion> User motion file (dynamic mode)
+  -u <user_motion> User motion file in ECEF x, y, z format (dynamic mode)
+  -x <user_motion> User motion file in lat, lon, height format (dynamic mode)
   -g <nmea_gga>    NMEA GGA stream (dynamic mode)
   -c <location>    ECEF X,Y,Z in meters (static mode) e.g. 3967283.15,1022538.18,4872414.48
   -l <location>    Lat,Lon,Hgt (static mode) e.g. 30.286502,120.032669,100
+  -L <wnslf,dn,dtslf> User leap future event in GPS week number, day number, next leap second e.g. 2347,3,19
   -t <date,time>   Scenario start time YYYY/MM/DD,hh:mm:ss
   -T <date,time>   Overwrite TOC and TOE to scenario start time
   -d <duration>    Duration [sec] (dynamic mode max: 300 static mode max: 86400)
@@ -85,6 +87,7 @@ Options:
   -s <frequency>   Sampling frequency [Hz] (default: 2600000)
   -b <iq_bits>     I/Q data format [1/8/16] (default: 16)
   -i               Disable ionospheric delay for spacecraft scenario
+  -p [fixed_gain]  Disable path loss and hold power level constant
   -v               Show details about simulated channels
 ```
 
@@ -92,6 +95,10 @@ The user motion can be specified in either dynamic or static mode:
 
 ```
 > gps-sdr-sim -e brdc3540.14n -u circle.csv
+```
+
+```
+> gps-sdr-sim -e brdc3540.14n -x circle_llh.csv
 ```
 
 ```
@@ -130,6 +137,12 @@ You can also execute these commands via the `bladeRF-cli` script option as below
 
 #### HackRF:
 
+The output data have to be 8-bit signed I/Q samples.
+```
+> gps-sdr-sim -e brdc0010.22n -b 8
+```
+You can use `hackrf_transfer` tool in the HackRF host software. 
+
 ```
 > hackrf_transfer -t gpssim.bin -f 1575420000 -s 2600000 -a 1 -x 0
 ```
@@ -138,6 +151,11 @@ You can also execute these commands via the `bladeRF-cli` script option as below
 
 ```
 > gps-sdr-sim-uhd.py -t gpssim.bin -s 2500000 -x 0
+```
+
+You can also use `tx_samples_from_file` tool included in the UHD examples:
+```
+> tx_samples_from_file --file gpssim.bin --type short --rate 2500000 --freq 1575420000 --gain 0
 ```
 
 #### LimeSDR (in case of 1 Msps 1-bit file, to get full BaseBand dynamic and low RF power):
@@ -169,5 +187,5 @@ Default 3.0MHz. Applicable range 1.0MHz to 5.0MHz.
 
 ### License
 
-Copyright &copy; 2015-2018 Takuji Ebinuma  
+Copyright &copy; 2015-2024 Takuji Ebinuma  
 Distributed under the [MIT License](http://www.opensource.org/licenses/mit-license.php).

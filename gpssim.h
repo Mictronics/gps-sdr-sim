@@ -1,7 +1,7 @@
 #ifndef GPSSIM_H
 #define GPSSIM_H
 
-#define FLOAT_CARR_PHASE // For RKT simulation. Higher computational load, but smoother carrier phase.
+//#define FLOAT_CARR_PHASE // For RKT simulation. Higher computational load, but smoother carrier phase.
 
 #define TRUE	(1)
 #define FALSE	(0)
@@ -78,7 +78,7 @@
 #define SC08 (8)
 #define SC16 (16)
 
-#define EPHEM_ARRAY_SIZE (13) // for daily GPS broadcast ephemers file (brdc)
+#define EPHEM_ARRAY_SIZE (15) // for daily GPS broadcast ephemers file (brdc)
 
 /*! \brief Structure representing GPS time */
 typedef struct
@@ -144,6 +144,8 @@ typedef struct
 	double A0,A1;
 	int dtls,tot,wnt;
 	int dtlsf,dn,wnlsf;
+	// enable custom leap event
+	int leapen;
 } ionoutc_t;
 
 typedef struct
